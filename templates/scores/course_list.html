@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+
+{% block title %}Courses - Golf Tracker{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Courses</h1>
+</div>
+
+<div class="row">
+  {% for course in courses %}
+  <div class="col-md-4 mb-3">
+    <div class="card h-100">
+      <div class="card-body">
+        <h5 class="card-title">{{ course.name }}</h5>
+        <p class="card-text text-muted">{{ course.location }}</p>
+        <p class="card-text">Par {{ course.par }} &middot; {{ course.holes }} holes</p>
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <p class="text-muted">No courses yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}
