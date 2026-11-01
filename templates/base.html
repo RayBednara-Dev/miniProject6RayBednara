@@ -15,12 +15,25 @@
       </button>
       <div class="collapse navbar-collapse" id="navMenu">
         <ul class="navbar-nav me-auto">
+          {% if user.is_authenticated %}
           <li class="nav-item"><a class="nav-link" href="{% url 'home' %}">Home</a></li>
           <li class="nav-item"><a class="nav-link" href="{% url 'course_list' %}">Courses</a></li>
+          {% endif %}
         </ul>
-        {% if user.is_authenticated %}
-        <span class="navbar-text text-white">Logged in as {{ user.username }}</span>
-        {% endif %}
+        <ul class="navbar-nav">
+          {% if user.is_authenticated %}
+          <li class="nav-item navbar-text text-white me-3">Logged in as {{ user.username }}</li>
+          <li class="nav-item">
+            <form method="post" action="{% url 'logout' %}" class="d-inline">
+              {% csrf_token %}
+              <button class="btn btn-outline-light btn-sm" type="submit">Logout</button>
+            </form>
+          </li>
+          {% else %}
+          <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'register' %}">Register</a></li>
+          {% endif %}
+        </ul>
       </div>
     </div>
   </nav>
