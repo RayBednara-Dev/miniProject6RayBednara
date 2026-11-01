@@ -8,8 +8,8 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import CourseForm, RegisterForm, RoundForm, RoundScoresForm
-from .models import Course, HoleScore, Round
+from .forms import CourseForm, RegisterForm, RoundForm, ScoreForm
+from .models import Course, Round
 
 
 def register(request):
@@ -68,17 +68,10 @@ def new_round(request):
 @login_required
 def round_detail(request, pk):
     round_obj = get_object_or_404(Round, pk=pk, player=request.user)
-    scores_by_hole = {s.hole_number: s.strokes for s in round_obj.hole_scores.all()}
-    hole_rows = [
-        (hole, scores_by_hole.get(hole))
-        for hole in range(1, round_obj.course.holes + 1)
-    ]
-
-    score_form = RoundScoresForm(holes=round_obj.course.holes, scores=scores_by_hole)
+    score_form = ScoreForm(instance=round_obj)
 
     return render(request, 'scores/round_detail.html', {
         'round': round_obj,
-        'hole_rows': hole_rows,
         'score_form': score_form,
     })
 
@@ -87,29 +80,22 @@ def round_detail(request, pk):
 def add_score(request, pk):
     round_obj = get_object_or_404(Round, pk=pk, player=request.user)
     if request.method == 'POST':
-        form = RoundScoresForm(request.POST, holes=round_obj.course.holes)
+        form = ScoreForm(request.POST, instance=round_obj)
         if form.is_valid():
-            for hole in range(1, round_obj.course.holes + 1):
-                strokes = form.cleaned_data.get(f'hole_{hole}')
-                if strokes:
-                    HoleScore.objects.update_or_create(
-                        round=round_obj, hole_number=hole, defaults={'strokes': strokes}
-                    )
-                else:
-                    HoleScore.objects.filter(round=round_obj, hole_number=hole).delete()
-            messages.success(request, 'Scorecard saved.')
+            form.save()
+            messages.success(request, 'Score saved.')
     return redirect('round_detail', pk=round_obj.pk)
 
 
 @login_required
 def stats(request):
     rounds = list(request.user.rounds.select_related('course'))
-    rounds_with_scores = [r for r in rounds if r.total_score]
+    rounds_with_scores = [r for r in rounds if r.score is not None]
 
-    best_round = min(rounds_with_scores, key=lambda r: r.total_score, default=None)
+    best_round = min(rounds_with_scores, key=lambda r: r.score, default=None)
     average_score = None
     if rounds_with_scores:
-        average_score = sum(r.total_score for r in rounds_with_scores) / len(rounds_with_scores)
+        average_score = sum(r.score for r in rounds_with_scores) / len(rounds_with_scores)
 
     return render(request, 'scores/stats.html', {
         'rounds_played': len(rounds),

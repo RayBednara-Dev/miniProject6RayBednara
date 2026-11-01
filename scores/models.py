@@ -27,6 +27,7 @@ class Round(models.Model):
     )
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='rounds')
     date_played = models.DateField()
+    score = models.PositiveSmallIntegerField(null=True, blank=True)
     notes = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -37,23 +38,7 @@ class Round(models.Model):
         return f'{self.player} at {self.course} on {self.date_played}'
 
     @property
-    def total_score(self):
-        total = self.hole_scores.aggregate(models.Sum('strokes'))['strokes__sum']
-        return total or 0
-
-    @property
     def to_par(self):
-        return self.total_score - self.course.par
-
-
-class HoleScore(models.Model):
-    round = models.ForeignKey(Round, on_delete=models.CASCADE, related_name='hole_scores')
-    hole_number = models.PositiveSmallIntegerField()
-    strokes = models.PositiveSmallIntegerField()
-
-    class Meta:
-        ordering = ['hole_number']
-        unique_together = ('round', 'hole_number')
-
-    def __str__(self):
-        return f'Hole {self.hole_number}: {self.strokes} strokes'
+        if self.score is None:
+            return None
+        return self.score - self.course.par

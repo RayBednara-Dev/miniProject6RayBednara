@@ -51,17 +51,14 @@ class RoundForm(forms.ModelForm):
         }
 
 
-class RoundScoresForm(forms.Form):
-    """Builds one strokes field per hole so a whole round can be entered at once."""
-
-    def __init__(self, *args, holes=18, scores=None, **kwargs):
-        super().__init__(*args, **kwargs)
-        scores = scores or {}
-        for hole in range(1, holes + 1):
-            self.fields[f'hole_{hole}'] = forms.IntegerField(
-                label=f'Hole {hole}',
-                required=False,
-                min_value=1,
-                initial=scores.get(hole),
-                widget=forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
-            )
+class ScoreForm(forms.ModelForm):
+    class Meta:
+        model = Round
+        fields = ['score']
+        widgets = {
+            'score': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'min': 1,
+                'placeholder': 'Total strokes for the round',
+            }),
+        }

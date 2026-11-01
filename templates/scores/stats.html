@@ -29,7 +29,7 @@
       <div class="card-body">
         <h6 class="text-muted">Best Round</h6>
         {% if best_round %}
-        <p class="display-6">{{ best_round.total_score }}</p>
+        <p class="display-6">{{ best_round.score }}</p>
         <a href="{% url 'round_detail' best_round.pk %}">
           {{ best_round.course.name }} &mdash; {{ best_round.date_played }}
         </a>

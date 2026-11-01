@@ -10,22 +10,22 @@ A Django web application for tracking golf rounds and scores.
 ## Description
 
 A golf score-keeping application built with Django. Users can register and log in,
-add golf courses, start a round, and enter hole-by-hole scores through a Bootstrap
-modal. The app keeps a scorecard per round and basic stats per player. Data is
-managed through Django's ORM and is also editable through the Django admin site.
+add golf courses, start a round, and enter their final score for the round through
+a Bootstrap modal. The app keeps a running history of rounds and basic stats per
+player. Data is managed through Django's ORM and is also editable through the
+Django admin site.
 
 **Features**
 * Register / login / logout (Django auth)
 * Add golf courses (name, location, par, holes)
-* Start a round and build a scorecard hole-by-hole
-* Enter/update a hole score through a Bootstrap modal on the round detail page
+* Start a round, then enter/edit its total score through a Bootstrap modal
 * Personal stats page (rounds played, average score, best round)
-* Django admin with styled list views and a `HoleScore` inline on `Round`
+* Django admin with styled list views for `Course` and `Round`
 
 **Project structure**
 * `golf_tracker/` &mdash; project settings and root URLconf
 * `scores/` &mdash; the single Django app containing models, views, forms, URLs,
-  and admin configuration for `Course`, `Round`, and `HoleScore`
+  and admin configuration for `Course` and `Round`
 * `templates/` &mdash; `base.html` plus `scores/` (app pages) and `registration/`
   (login/register) template folders
 
@@ -85,7 +85,7 @@ Claude Code was used to create portions of this project.
 
 Claude Code (Anthropic) was used throughout this project to:
 * Scaffold the Django project and `scores` app structure
-* Help design the `Course`, `Round`, and `HoleScore` models
+* Help design the `Course` and `Round` models
 * Draft views, URLs, and Bootstrap-based templates (including the score-entry modal)
 * Configure Django admin and the register/login authentication flow
 * Write and organize this README
