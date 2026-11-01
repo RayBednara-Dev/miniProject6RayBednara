@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Stats - Golf Tracker{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Your Stats</h1>
+
+<div class="row">
+  <div class="col-md-4 mb-3">
+    <div class="card text-center h-100">
+      <div class="card-body">
+        <h6 class="text-muted">Rounds Played</h6>
+        <p class="display-6">{{ rounds_played }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-3">
+    <div class="card text-center h-100">
+      <div class="card-body">
+        <h6 class="text-muted">Average Score</h6>
+        <p class="display-6">
+          {% if average_score %}{{ average_score|floatformat:1 }}{% else %}&ndash;{% endif %}
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-3">
+    <div class="card text-center h-100">
+      <div class="card-body">
+        <h6 class="text-muted">Best Round</h6>
+        {% if best_round %}
+        <p class="display-6">{{ best_round.total_score }}</p>
+        <a href="{% url 'round_detail' best_round.pk %}">
+          {{ best_round.course.name }} &mdash; {{ best_round.date_played }}
+        </a>
+        {% else %}
+        <p class="display-6">&ndash;</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -14,6 +14,21 @@ add golf courses, start a round, and enter hole-by-hole scores through a Bootstr
 modal. The app keeps a scorecard per round and basic stats per player. Data is
 managed through Django's ORM and is also editable through the Django admin site.
 
+**Features**
+* Register / login / logout (Django auth)
+* Add golf courses (name, location, par, holes)
+* Start a round and build a scorecard hole-by-hole
+* Enter/update a hole score through a Bootstrap modal on the round detail page
+* Personal stats page (rounds played, average score, best round)
+* Django admin with styled list views and a `HoleScore` inline on `Round`
+
+**Project structure**
+* `golf_tracker/` &mdash; project settings and root URLconf
+* `scores/` &mdash; the single Django app containing models, views, forms, URLs,
+  and admin configuration for `Course`, `Round`, and `HoleScore`
+* `templates/` &mdash; `base.html` plus `scores/` (app pages) and `registration/`
+  (login/register) template folders
+
 ## Getting Started
 
 ### Dependencies

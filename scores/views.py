@@ -99,3 +99,20 @@ def add_score(request, pk):
                 request, f"Hole {form.cleaned_data['hole_number']} score saved."
             )
     return redirect('round_detail', pk=round_obj.pk)
+
+
+@login_required
+def stats(request):
+    rounds = list(request.user.rounds.select_related('course'))
+    rounds_with_scores = [r for r in rounds if r.total_score]
+
+    best_round = min(rounds_with_scores, key=lambda r: r.total_score, default=None)
+    average_score = None
+    if rounds_with_scores:
+        average_score = sum(r.total_score for r in rounds_with_scores) / len(rounds_with_scores)
+
+    return render(request, 'scores/stats.html', {
+        'rounds_played': len(rounds),
+        'best_round': best_round,
+        'average_score': average_score,
+    })
