@@ -9,7 +9,7 @@
     <p class="text-muted mb-0">{{ round.date_played }} &middot; Par {{ round.course.par }}</p>
   </div>
   <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#scoreModal">
-    Enter Score
+    Enter Scorecard
   </button>
 </div>
 
@@ -38,29 +38,32 @@
   </table>
 </div>
 
-<!-- Bootstrap modal for entering a hole score -->
+<!-- Bootstrap modal for entering the whole round's scorecard -->
 <div class="modal fade" id="scoreModal" tabindex="-1" aria-labelledby="scoreModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <form method="post" action="{% url 'add_score' round.pk %}">
         {% csrf_token %}
         <div class="modal-header">
-          <h5 class="modal-title" id="scoreModalLabel">Enter Score</h5>
+          <h5 class="modal-title" id="scoreModalLabel">Enter Scorecard</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
-          <div class="mb-3">
-            <label class="form-label" for="{{ score_form.hole_number.id_for_label }}">Hole</label>
-            {{ score_form.hole_number }}
-          </div>
-          <div class="mb-3">
-            <label class="form-label" for="{{ score_form.strokes.id_for_label }}">Strokes</label>
-            {{ score_form.strokes }}
+          <div class="row">
+            {% for field in score_form %}
+            <div class="col-6 col-md-3 mb-3">
+              <label class="form-label" for="{{ field.id_for_label }}">{{ field.label }}</label>
+              {{ field }}
+              {% if field.errors %}
+              <div class="text-danger small">{{ field.errors }}</div>
+              {% endif %}
+            </div>
+            {% endfor %}
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-success">Save Score</button>
+          <button type="submit" class="btn btn-success">Save Scorecard</button>
         </div>
       </form>
     </div>

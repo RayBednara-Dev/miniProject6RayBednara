@@ -7,7 +7,7 @@ from django import forms
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
 
-from .models import Course, Round, HoleScore
+from .models import Course, Round
 
 
 class LoginForm(AuthenticationForm):
@@ -51,11 +51,17 @@ class RoundForm(forms.ModelForm):
         }
 
 
-class HoleScoreForm(forms.ModelForm):
-    class Meta:
-        model = HoleScore
-        fields = ['hole_number', 'strokes']
-        widgets = {
-            'hole_number': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
-            'strokes': forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
-        }
+class RoundScoresForm(forms.Form):
+    """Builds one strokes field per hole so a whole round can be entered at once."""
+
+    def __init__(self, *args, holes=18, scores=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        scores = scores or {}
+        for hole in range(1, holes + 1):
+            self.fields[f'hole_{hole}'] = forms.IntegerField(
+                label=f'Hole {hole}',
+                required=False,
+                min_value=1,
+                initial=scores.get(hole),
+                widget=forms.NumberInput(attrs={'class': 'form-control', 'min': 1}),
+            )

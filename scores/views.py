@@ -8,7 +8,7 @@ from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
-from .forms import CourseForm, HoleScoreForm, RegisterForm, RoundForm
+from .forms import CourseForm, RegisterForm, RoundForm, RoundScoresForm
 from .models import Course, HoleScore, Round
 
 
@@ -74,8 +74,7 @@ def round_detail(request, pk):
         for hole in range(1, round_obj.course.holes + 1)
     ]
 
-    score_form = HoleScoreForm()
-    score_form.fields['hole_number'].widget.attrs['max'] = round_obj.course.holes
+    score_form = RoundScoresForm(holes=round_obj.course.holes, scores=scores_by_hole)
 
     return render(request, 'scores/round_detail.html', {
         'round': round_obj,
@@ -88,16 +87,17 @@ def round_detail(request, pk):
 def add_score(request, pk):
     round_obj = get_object_or_404(Round, pk=pk, player=request.user)
     if request.method == 'POST':
-        form = HoleScoreForm(request.POST)
+        form = RoundScoresForm(request.POST, holes=round_obj.course.holes)
         if form.is_valid():
-            HoleScore.objects.update_or_create(
-                round=round_obj,
-                hole_number=form.cleaned_data['hole_number'],
-                defaults={'strokes': form.cleaned_data['strokes']},
-            )
-            messages.success(
-                request, f"Hole {form.cleaned_data['hole_number']} score saved."
-            )
+            for hole in range(1, round_obj.course.holes + 1):
+                strokes = form.cleaned_data.get(f'hole_{hole}')
+                if strokes:
+                    HoleScore.objects.update_or_create(
+                        round=round_obj, hole_number=hole, defaults={'strokes': strokes}
+                    )
+                else:
+                    HoleScore.objects.filter(round=round_obj, hole_number=hole).delete()
+            messages.success(request, 'Scorecard saved.')
     return redirect('round_detail', pk=round_obj.pk)
 
 
