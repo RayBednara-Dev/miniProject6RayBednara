@@ -46,13 +46,25 @@ pip install -r requirements.txt
 
 ### Database Initialization
 
-Django uses SQLite by default (no extra setup required). Create the database
-tables and a superuser account for the admin site:
+Django uses SQLite by default, so there's no separate database server to install
+or start &mdash; the project reads and writes a local `db.sqlite3` file.
+
+* Generate migration files from the models in `scores/` (not usually needed on a
+  fresh clone, since the migrations are already committed, but run it if you
+  change a model):
 ```
 python manage.py makemigrations
+```
+* Apply migrations to create the actual database tables (`Course`, `Round`,
+  plus Django's built-in auth/session/admin tables) in `db.sqlite3`:
+```
 python manage.py migrate
+```
+* Create an admin account so you can log in to `/admin/` and manage data directly:
+```
 python manage.py createsuperuser
 ```
+  You'll be prompted for a username, email, and password.
 
 ### Executing program
 
@@ -73,13 +85,6 @@ Contributors names and contact info
 
 Ray Bednara  (r_bednara@mail.fhsu.edu)
 
-## License
-
-This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
-
-## Acknowledgments
-
-Claude Code was used to create portions of this project.
 
 ## AI Usage
 
