@@ -3,23 +3,27 @@
 {% block title %}Home - Golf Tracker{% endblock %}
 
 {% block content %}
-<h1 class="mb-4">Welcome, {{ user.username }}</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1>Welcome, {{ user.username }}</h1>
+  <a href="{% url 'new_round' %}" class="btn btn-success">Start New Round</a>
+</div>
 
 <h2 class="h4">Recent Rounds</h2>
 {% if rounds %}
 <div class="list-group mb-3">
   {% for round in rounds %}
-  <div class="list-group-item d-flex justify-content-between align-items-center">
+  <a href="{% url 'round_detail' round.pk %}"
+     class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
     <div>
       <strong>{{ round.course.name }}</strong> &mdash; {{ round.date_played }}
     </div>
     <span class="badge bg-success rounded-pill">{{ round.total_score }} strokes</span>
-  </div>
+  </a>
   {% endfor %}
 </div>
 {% else %}
 <p class="text-muted">You haven't logged any rounds yet.</p>
 {% endif %}
 
-<a href="{% url 'course_list' %}" class="btn btn-success">Browse Courses</a>
+<a href="{% url 'course_list' %}" class="btn btn-outline-success">Browse Courses</a>
 {% endblock %}
